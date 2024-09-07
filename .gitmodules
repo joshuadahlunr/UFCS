@@ -1,0 +1,6 @@
+[submodule "argparse"]
+	path = argparse
+	url = https://github.com/morrisfranken/argparse.git
+[submodule "compile-time-regular-expressions"]
+	path = compile-time-regular-expressions
+	url = https://github.com/hanickadot/compile-time-regular-expressions.git
