@@ -18,29 +18,40 @@ struct Args : public argparse::Args {
 	std::optional<std::string>& outFile = arg("File to write").set_default(std::optional<std::string>{});
 };
 
+static bool matched = false;
+
 std::string substitue_ufcs(std::string content) {
-	auto match = ctre::match<R"_(((?:[^.;=\n]*?\.)+)([^(!\n]*?)\s*(\([^)]*\)|\[[^\]]*\]))_">(content);
+	auto match = ctre::match<R"_(([^.,;+\-*/%=!?<>&|^~\s]*\s*\(|~>)?((?:[^.,;+\-/%=?<|^~>\n]*?\.)+)([^(!\n]*?)\s*(\([^)]*\)|\[[^\]]*\]))_">(content);
 	if(!match.data()) return content;
 
-	auto arg1 = match.get<1>().to_string();
+	matched = true;
+
+	auto prefix = match.get<1>().to_string();
+	if(prefix == "~>") prefix = "";
+	auto arg1 = match.get<2>().to_string();
 	size_t arg1Start = arg1.find_first_not_of(" \t\n\r");
 	auto spacing = arg1.substr(0, arg1Start);
 	arg1 = substitue_ufcs(arg1.substr(arg1Start, arg1.size() - arg1Start - 1));
-	auto function = match.get<2>().to_string();
-	auto arguments = match.get<3>().to_string();
+	auto function = match.get<3>().to_string();
+	auto arguments = match.get<4>().to_string();
 	arguments = arguments.substr(arguments.find("(") + 1);
 
 	std::string result = spacing + function + "(";
 	if(arguments[arguments.find_first_not_of(" \t\n\r")] != ')')
 		return result + arg1 + ", " + arguments;
-	else return result + arg1 + ")";
+	else return prefix + result + arg1 + ")";
 }
 
 std::string process_input(std::string content) {
 	yyoutput.clear();
-	yy_scan_string(content.c_str());
-	while(yylex());
-	return yyoutput;
+	matched = true;
+	while(matched) {
+		matched = false;
+		yy_scan_string(content.c_str());
+		while(yylex());
+		content = std::move(yyoutput);
+	}
+	return content;
 }
 
 std::string replace_dotbang(std::string content) {
