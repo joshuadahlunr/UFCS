@@ -9,7 +9,7 @@ int main() {
 
 	file.fprintf("Hello, World!\n"); 
 
-	while(file.fscanf("bob"));
+	while(~> file.fscanf("bob"));
 	printf(~> file.fscanf("bob"), file.fscanf("bob"));
 	vec2.length() < &vec2.length();
 	*vec2.length() * ~>vec2.length();
