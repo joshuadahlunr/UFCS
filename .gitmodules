@@ -1,3 +1,11 @@
 [submodule "tree-sitter-ufcsc"]
 	path = tree-sitter-ufcsc
 	url = https://github.com/joshuadahlunr/tree-sitter-ufcsc
+[submodule "argparse"]
+	path = argparse
+	url = https://github.com/morrisfranken/argparse.git
+	shallow = true
+[submodule "tree-sitter"]
+	path = tree-sitter
+	url = https://github.com/tree-sitter/tree-sitter.git
+	shallow = true
